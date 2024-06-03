@@ -38,7 +38,7 @@
           nativeBuildInputs = with pkgs; [
             rust
             openssl
-            pkgconfig
+            pkg-config
           ];
         };
         defaultPackage = packages.hello_world;
@@ -73,7 +73,7 @@
 
             # Build deps
             openssl
-            pkgconfig
+            pkg-config
           ];
         };
       }
