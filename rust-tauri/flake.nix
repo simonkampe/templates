@@ -29,12 +29,27 @@
           };
           
           buildInputs = with pkgs; [
+            at-spi2-atk
+            atkmm
+            cairo
+            gdk-pixbuf
+            glib
+            gtk3
+            harfbuzz
+            librsvg
+            libsoup_3
+            pango
+            webkitgtk_4_1
+            openssl
           ];
           
           nativeBuildInputs = with pkgs; [
             rust
-            openssl
             pkg-config
+            gobject-introspection
+            cargo 
+            cargo-tauri # Optional, Only needed if Tauri doesn't work through the traditional way.
+            nodejs # Optional, this is for if you have a js frontend
           ];
         };
         defaultPackage = packages.hello_world;
@@ -63,14 +78,9 @@
 
           nativeBuildInputs = with pkgs; [
             # Tools
-            rust
             rust-analyzer
             clippy
-
-            # Build deps
-            openssl
-            pkg-config
-          ];
+          ] ++ packages.hello_world.nativeBuildInputs ++ packages.hello_world.buildInputs;
         };
       }
     );
