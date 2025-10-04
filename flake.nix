@@ -20,6 +20,10 @@
         description = "Rust template using Oxalicas overlay";
       };
     
+      tauri = {
+        path = ./rust-tauri;
+        description = "Rust template for Tauri projects";
+      };
     };
   };
 }
