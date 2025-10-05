@@ -24,6 +24,11 @@
         path = ./rust-tauri;
         description = "Rust template for Tauri projects";
       };
+
+      dioxus = {
+        path = ./rust-dioxus;
+        description = "Rust template for Dioxus projects";
+      };
     };
   };
 }
