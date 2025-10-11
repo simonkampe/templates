@@ -29,6 +29,11 @@
         path = ./rust-dioxus;
         description = "Rust template for Dioxus projects";
       };
+
+      bevy = {
+        path = ./rust-bevy;
+        description = "Rust template for Bevy projects";
+      };
     };
   };
 }
