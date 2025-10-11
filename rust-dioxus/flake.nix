@@ -16,39 +16,6 @@
         };
 
         rust = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
-
-
-        dioxus-cli = pkgs.dioxus-cli.overrideAttrs ( _: {
-          postPatch = ''
-            rm Cargo.lock
-            cp ${./Dioxus.lock} Cargo.lock
-          '';
-
-          cargoDeps = pkgs.rustPlatform.importCargoLock {
-            lockFile = ./Dioxus.lock;
-          };
-        });
-
-        cargoLock = builtins.fromTOML (builtins.readFile ./Cargo.lock);
-
-        wasmBindgen = pkgs.lib.findFirst
-          (pkgs: pkgs.name == "wasm-bindgen")
-          (throw "Could not find package wasm-bindgen")
-          cargoLock.package;
-
-        wasm-bindgen-cli = pkgs.buildWasmBindgenCli rec {
-          src = pkgs.fetchCrate {
-            pname = "wasm-bindgen-cli";
-            version = wasmBindgen.version;
-            hash = "sha256-txpbTzlrPSEktyT9kSpw4RXQoiSZHm9t3VxeRn//9JI=";
-          };
-
-          cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
-            inherit src;
-            inherit (src) pname version;
-            hash = "sha256-J+F9SqTpH3T0MbvlNKVyKnMachgn8UXeoTF0Pk3Xtnc=";
-          };
-        };
       in rec
       {
         packages.hello_world = pkgs.rustPlatform.buildRustPackage {
@@ -62,11 +29,23 @@
           };
           
           buildInputs = with pkgs; [
+            at-spi2-atk
+            atkmm
+            cairo
+            gdk-pixbuf
+            glib
+            gtk3
+            harfbuzz
+            librsvg
+            libsoup_3
+            pango
+            webkitgtk_4_1
+            openssl
+            libayatana-appindicator
           ];
           
           nativeBuildInputs = with pkgs; [
             rust
-            openssl
             pkg-config
           ];
         };
