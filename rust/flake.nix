@@ -16,11 +16,18 @@
         };
 
         rust = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
+        rustPlatform = pkgs.makeRustPlatform {
+          cargo = rust;
+          rustc = rust;
+        };
+
+        cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
+
       in rec
       {
-        packages.hello_world = pkgs.rustPlatform.buildRustPackage {
-          pname = "hello_world";
-          version = "0.0.0";
+        packages.defaultPackage = rustPlatform.buildRustPackage {
+          pname = cargoToml.package.name;
+          version = cargoToml.package.version;
           
           src = self;
           
@@ -32,17 +39,15 @@
           ];
           
           nativeBuildInputs = with pkgs; [
-            rust
             openssl
             pkg-config
           ];
         };
-        defaultPackage = packages.hello_world;
 
         # Build docker image with nix build .#docker
         packages.docker =
         let
-          hello_world = self.defaultPackage.${system};
+          defaultPackage = self.defaultPackage.${system};
         in pkgs.dockerTools.buildLayeredImage {
           name = hello_world.name;
           tag = hello_world.version;
@@ -61,16 +66,14 @@
         devShells.default = pkgs.mkShell {
           RUST_BACKTRACE="full";
 
-          nativeBuildInputs = with pkgs; [
+          name = "${cargoToml.package.name}-dev"
+
+          packages = with pkgs; [
             # Tools
-            rust
+            (rust.override { extensions = ["rust-src" "rustfmt" "clippy"]; })
             rust-analyzer
             clippy
-
-            # Build deps
-            openssl
-            pkg-config
-          ];
+          ] ++ packages.defaultPackage.buildInputs ++ packages.defaultPackage.nativeBuildInputs;
         };
       }
     );
